@@ -12,16 +12,26 @@ sprites.src = './sprites.png';
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 
+// AUX VARS AND CONSTS
+let frames = 0;
+
 // CLONEBIRD
 const flappyBird = {
-    srcX: 0,
-    srcY: 0,
+    // srcX: 0,
+    // srcY: 0,
+    animation: [
+        { srcX: 0, srcY: 0 },
+        { srcX: 0, srcY: 26 },
+        { srcX: 0, srcY: 52 },
+        { srcX: 0, srcY: 26 },
+    ],
     largura: 33,
     altura: 24,
-    x: 10,
-    y: 50,
+    x: 50,
+    y: 150,
     gravidade: 0.25,
     velocidade: 0,
+    frame: 1,
 
     updateValue(){
         this.velocidade = this.velocidade + this.gravidade
@@ -29,9 +39,11 @@ const flappyBird = {
     },
 
     draw(){
+        let bird = this.animation[this.frame]
+        
         ctx.drawImage(
             sprites,
-            this.srcX, this.srcY, //Ponto de inicialização da leitura do sprite
+            bird.srcX, bird.srcY, //Ponto de inicialização da leitura do sprite
             this.largura, this.altura, //Tamanho do recorte a partir do ponto definido
             this.x, this.y, //Ponto de partida pro desenho dentro do canvas
             this.largura, this.altura, //Tamanho da imagem montada no canvas
@@ -102,8 +114,29 @@ const getReady = {
     srcY: 0,
     largura: 174,
     altura: 152,
+    // x: (canvas.width/2) - 174/2,
     x: (canvas.width/2) - 174/2,
-    y: (canvas.height/2) - 152/2,
+    y: (canvas.height/2) -152,
+
+    draw(){
+        ctx.drawImage(
+            sprites,
+            this.srcX, this.srcY,
+            this.largura, this.altura,
+            this.x, this.y,
+            this.largura, this.altura,
+        );
+        
+    }
+}
+
+const gameOver = {
+    srcX: 134,
+    srcY: 153,
+    largura: 227,
+    altura: 200,
+    x: (canvas.width/2) - 227/2,
+    y: (canvas.height/2) - 200/2,
 
     draw(){
         ctx.drawImage(
@@ -130,10 +163,11 @@ const screens = {
             floor.draw();
             flappyBird.draw();
             getReady.draw();
+            // gameOver.draw();
         },
 
         click(){
-            changeScreen(screens.play);
+            changeScreen(screens.game);
         },
 
         updateValue(){
@@ -141,7 +175,7 @@ const screens = {
         }
     },
 
-    play: {
+    game: {
         draw(){
             background.draw();
             floor.draw();
@@ -157,11 +191,12 @@ const screens = {
 function loop(){
     currentScreen.updateValue();
     currentScreen.draw();
+    frames++;
     
     requestAnimationFrame(loop); //Performance de animação
 }
 
-window.addEventListener('click', function(){
+canvas.addEventListener('click', function(){
     if (currentScreen.click) {
         currentScreen.click();
     }
