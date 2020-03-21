@@ -31,7 +31,7 @@ const flappyBird = {
     y: 150,
     gravidade: 0.25,
     velocidade: 0,
-    frame: 1,
+    frame: frames,
 
     updateValue(){
         this.velocidade = this.velocidade + this.gravidade
@@ -48,6 +48,10 @@ const flappyBird = {
             this.x, this.y, //Ponto de partida pro desenho dentro do canvas
             this.largura, this.altura, //Tamanho da imagem montada no canvas
         );
+    },
+
+    flap(){
+
     }
 }
 
@@ -152,22 +156,21 @@ const gameOver = {
 
 // TELAS
 let currentScreen = {};
-function changeScreen(newScreen){
-    currentScreen = newScreen;
+function changeState(newState){
+    currentState = newState;
 };
 
-const screens = {
+const state = {
     start: {
         draw(){
             background.draw();
             floor.draw();
             flappyBird.draw();
             getReady.draw();
-            // gameOver.draw();
         },
 
         click(){
-            changeScreen(screens.game);
+            changeState(state.game);
         },
 
         updateValue(){
@@ -181,26 +184,49 @@ const screens = {
             floor.draw();
             flappyBird.draw();
         },
-
+        
+        click(){
+            changeState(state.over);
+            
+        },
+        
         updateValue(){
             flappyBird.updateValue();
         }
     },
+    
+    over: {
+        draw(){
+            background.draw();
+            floor.draw();
+            flappyBird.draw();
+            gameOver.draw();
+        },
+        
+        click(){
+            changeState(state.start);
+        },
+
+        updateValue(){
+
+        }
+
+    }
 }
 
 function loop(){
-    currentScreen.updateValue();
-    currentScreen.draw();
+    currentState.updateValue();
+    currentState.draw();
     frames++;
     
     requestAnimationFrame(loop); //Performance de animação
 }
 
 canvas.addEventListener('click', function(){
-    if (currentScreen.click) {
-        currentScreen.click();
+    if (currentState.click) {
+        currentState.click();
     }
 })
 
-changeScreen(screens.start);
+changeState(state.start);
 loop();
