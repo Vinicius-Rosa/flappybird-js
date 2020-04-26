@@ -4,6 +4,8 @@
  * Data: 21/03/2020
  * 
  * Créditos: Mário Solto - https://www.youtube.com/channel/UCzR2u5RWXWjUh7CwLSvbitA
+ * 
+ * Continuação: https://youtu.be/0ArCFchlTq4?t=1992
  */
 
 const sprites = new Image();
@@ -14,6 +16,12 @@ const ctx = canvas.getContext('2d');
 
 // AUX VARS AND CONSTS
 let frames = 0;
+
+function existCollision(flappyBird, floor){
+    if (flappyBird.y + flappyBird.altura >= floor.y) {
+        return true
+    }
+}
 
 // CLONEBIRD
 const flappyBird = {
@@ -32,8 +40,14 @@ const flappyBird = {
     gravidade: 0.25,
     velocidade: 0,
     frame: frames,
+    pulo: 5.4,
 
     updateValue(){
+        if (existCollision(flappyBird, floor)) {
+            changeState(state.over)
+            return false;
+        }
+
         this.velocidade = this.velocidade + this.gravidade
         this.y = this.y + this.velocidade;
     },
@@ -51,6 +65,10 @@ const flappyBird = {
     },
 
     flap(){
+        // flappyBird.y = 60; 
+        console.log(this.velocidade)
+        this.velocidade = - this.pulo;
+        console.log(this.velocidade)
 
     }
 }
@@ -186,7 +204,7 @@ const state = {
         },
         
         click(){
-            changeState(state.over);
+            flappyBird.flap();
             
         },
         
@@ -204,7 +222,8 @@ const state = {
         },
         
         click(){
-            changeState(state.start);
+            // changeState(state.start);
+            window.location.reload();
         },
 
         updateValue(){
